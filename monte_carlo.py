@@ -1,38 +1,44 @@
 import numpy as np
 from math import sqrt
 import matplotlib.pyplot as plt
-import numpy.random as rd  # sous-module numpy pour générer des tableaux de nbres aléatoire
+import numpy.random as rd  
 
-squared = lambda x:x*x
-is_number = lambda x: type(x)==int or type(x)==float
-
+squ = lambda x : x * x
+is_number = lambda x: type(x) == int or type(x) == float
+u_prod = lambda a,b,res : res.v * sqrt(squ(a.u/a.v)+squ(b.u/b.v))
+u_som = lambda a,b,res : sqrt(squ(a.u) + squ(b.u))
 class Grand:
+
     def __init__(self, valeur, delta):
         self.v = valeur
         self.d = abs(delta)
         self.u = delta / sqrt(3)
 
-    def __add__(self, other):
-        if type(other)==type(self):
-            r = Grand(self.v+other.v, 0)
-            r.u = sqrt(self.u * self.u + other.u * other.u)
-            return r
+    def __abs__(self):
+        return Grand(abs(self.v),self.d)
+
+    def evaluate(self,other,fun,ufun):
+        if type(other) == type(self):
+            r = Grand(fun(self.v,other.v),self.d)
         elif is_number(other):
-            r = Grand(self.v+other,0)
-            r.u = abs(other) * self.u
-            return u
+            r = Grand(fun(self.v,other.v),self.d)
+            other.u = 0
         else:
             raise ArithmeticError
+        r.u = ufun(self,other,r)
+        return r
+    
+    def __add__(self, other):
+        return self.evaluate(other,lambda x,y : x+y,u_som)
 
+    def __sub__(self, other):
+        return self.evaluate(other,lambda x,y : x-y,u_som)
+    
     def __mul__(self, other):
-        if type(other) == type(self) : 
-            r = Grand(self.v*other.v,self.d)
-            r.u = r.v * sqrt(squared(self.u/self.v)+squared(other.u/other.v))
-            return r
-        else:
-            r = Grand(self.v*other,self.d)
-            r.u = abs(other)*self.u
-            return r
+        return self.evaluate(other,lambda x,y : x*y,u_prod)
+    
+    def __div__(self, other):
+        return self.evaluate(other,lambda x,y : x/y,u_prod)
 
     def __repr__(self):
         return f"{round(self.v,10)}±{round(self.u,10)}"
