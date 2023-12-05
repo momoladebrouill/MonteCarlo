@@ -3,49 +3,17 @@ from math import sqrt
 import matplotlib.pyplot as plt
 import numpy.random as rd  
 
-grec ={"a":"α",
-       "b":"β", 
-       "g":"γ", 
-       "D":"Δ",
-       "d":"δ",
-       "e":"ε",
-       "z":"ζ",
-       "h":"η",
-       "T":"Θ",
-       "t":"θ",
-       "i":"ι", 
-       "k":"κ", 
-       "L":"Λ",
-       "l":"λ",
-       "m":"μ",
-       "n":"ν", 
-       "Xi":"Ξ", 
-       "xi":"ξ",
-       "o":"ο", 
-       "P":"Π",
-       "p":"π",
-       "r":"ρ", 
-       "S":"Σ",
-       "s":"σ",
-       "t":"τ", 
-       "y":"υ", 
-       "F":"Φ",
-       "f":"φ",
-       "x":"χ", 
-       "Psi":"Ψ", 
-       "psi":"ψ", 
-       "O":"Ω",
-       "omega":"ω"}
+grec ={"a":"α", "b":"β",  "g":"γ",  "D":"Δ", "d":"δ", "e":"ε", "z":"ζ", "h":"η", "T":"Θ", "t":"θ", "i":"ι",  "k":"κ",  "L":"Λ", "l":"λ", "m":"μ", "n":"ν",  "Xi":"Ξ",  "xi":"ξ", "o":"ο",  "P":"Π", "p":"π", "r":"ρ",  "S":"Σ", "s":"σ", "t":"τ",  "y":"υ",  "F":"Φ", "f":"φ", "x":"χ",  "Psi":"Ψ",  "psi":"ψ",  "O":"Ω", "omega":"ω"}
 
 squ = lambda x : x * x
 is_number = lambda x: type(x) == int or type(x) == float
 u_prod = lambda a,b,res : res.v * sqrt(squ(a.u/a.v)+squ(b.u/b.v))
 u_som = lambda a,b,res : sqrt(squ(a.u) + squ(b.u))
 
-class Env :
+class Env:
     def __init__(self, N = 1000, prec = 3):
-        self.N=N
-        self.prec=prec
+        self.N = N
+        self.prec = prec
 
 class Grand:
 
@@ -59,10 +27,10 @@ class Grand:
         return Grand(abs(self.v),self.d)
     
     def evaluate(self,other,fun,ufun):
-        if type(self)==type(other):
+        if type(self) == type(other): # une autre grandeur avec incertitude
             r = Grand(fun(self.v,other.v),self.d,self.env)
             r.u = ufun(self,other,r)
-        elif is_number(other):
+        elif is_number(other): # un scalaire
             r = Grand(fun(self.v,other),self.d,self.env)
             r.u = self.u
         else :
@@ -70,7 +38,7 @@ class Grand:
         return r
 
     def apply(self,fun):
-        g = Grand(fun(self.v),1,env=self.env)
+        g =  Grand(fun(self.v),1,env = self.env)
         g.u = self.u
         return g
     
@@ -98,8 +66,8 @@ class Grand:
     def generate(self,n):
         self.sim = self.v + rd.uniform(-self.d,self.d,n)
 
-    __rmul__=__mul__
-    __radd__=__add__
+    __rmul__ = __mul__
+    __radd__ = __add__
 
 class MonteCarlo:
     
@@ -142,8 +110,8 @@ class MonteCarlo:
     def __rtruediv__(self,other):
         return self.montecarlotte(other,(lambda x,y : y / x))
 
-    __radd__=__add__
-    __rmul__=__mul__
+    __radd__ = __add__
+    __rmul__ = __mul__
         
     @property
     def v(self):
